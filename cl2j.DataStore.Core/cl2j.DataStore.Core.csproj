@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>cl2j</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright />
+    <PackageProjectUrl>https://github.com/jfblier/cl2j.Repository</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
