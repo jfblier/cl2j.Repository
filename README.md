@@ -210,6 +210,6 @@ If you have a technical question or issue, please either:
 
 - Add new implementation
   - `Database` implementation using reflection to create, modify and delete objects
-- `CQRS` Use CQRS parttern to decouple the read and write. This will allow
+- `CQRS` Use CQRS pattern to decouple the read and write. This will allow
 - `Cache` Add a simple builtin caching mecanism to have performant read DataStore
 - Helper to convert to Dictionary DataStore
