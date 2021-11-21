@@ -4,6 +4,8 @@ Providers supported:
 
 - `JSON` - Data store that use a JSON file for CRUD
 
+The library also support a memory cache DataStore implemented as a [Decorator Pattern](https://en.wikipedia.org/wiki/Decorator_pattern). See below for more information.
+
 # Getting started
 
 The setup is simple.
@@ -42,7 +44,7 @@ Path is the local path, i.e. c:\dev, where the json file will be.
 
 1. The name of the FileStore to use. That's the name declared in the appsettings.json.
 2. The name of the file were the data are persisted.
-3. A predeicate that tell the DataStore how to get a item by it's id.
+3. A function that return the unique key to identify the item.
 
 ## Web Application
 
@@ -57,10 +59,8 @@ public void ConfigureServices(IServiceCollection services)
 
   //Configure the JSON DataStore.
   //The store will use the FileStorageProvider to access the file colors.json.
-  services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (predicate) =>
-  {
-      return predicate.Item1.Id == predicate.Item2;
-  });
+  //The field Id represent the key for the Color class
+  services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
 }
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -84,10 +84,8 @@ services.AddFileStorage();
 
 //Configure the JSON DataStore.
 //The store will use the FileStorageProvider to access the file colors.json.
-services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (predicate) =>
-{
-    return predicate.Item1.Id == predicate.Item2;
-});
+//The field Id represent the key for the Color class
+services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
 
 //Add the Disk FileStorage provider
 var serviceProvider = services.BuildServiceProvider();
@@ -188,12 +186,28 @@ public interface IDataStore<TKey, TValue>
     Task InsertAsync(TValue entity);
 
     //Update an item
-    Task UpdateAsync(TKey key, TValue entity);
+    Task UpdateAsync(TValue entity);
 
     //Delete an item
     Task DeleteAsync(TKey key);
 }
 ```
+
+# Cache
+
+Adding a memory cache, that is thread-safe, and refresh itself at specified interval is as simple as adding the following line in your startup or program:
+
+```cs
+services.AddDataStoreJsonWithCache<string, Color>("Color", "DataStore", "colors.json", (color) => color.Id, TimeSpan.FromSeconds(5));
+```
+
+As the DataStoreCache is a `Decorator Pattern` and implement the `IDataStore` interface, using the cache is the same as using the `IDataStore`.
+
+- `Cache name` Name of the cache - for logging purpose
+- `FileStore name` Name of the FileStore to use. That's the name declared in the appsettings.json.
+- `File name` Name of the file were the data are persisted.
+- `Key identifier` A lambda expression that return the unique key of the item. In the example, It's the Id property of the Color class.
+- `Refresh interval` A TimeSpan indicating the interval that the cache will be refreshed. In the example, we indicate that the cache will be refreshed every 5 seconds.
 
 # Feedback & Community
 
