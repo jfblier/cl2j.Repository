@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
