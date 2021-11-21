@@ -6,7 +6,7 @@ namespace cl2j.DataStore.Core
     public interface IDataStore<TKey, TValue>
     {
         //Retreive all the items
-        Task<IEnumerable<TValue>> GetAllAsync();
+        Task<List<TValue>> GetAllAsync();
 
         //Get an item by it's key (Id)
         Task<TValue> GetByIdAsync(TKey key);
@@ -15,7 +15,7 @@ namespace cl2j.DataStore.Core
         Task InsertAsync(TValue entity);
 
         //Update an item
-        Task UpdateAsync(TKey key, TValue entity);
+        Task UpdateAsync(TValue entity);
 
         //Delete an item
         Task DeleteAsync(TKey key);

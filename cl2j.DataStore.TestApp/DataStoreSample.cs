@@ -34,7 +34,7 @@ namespace cl2j.DataStore.TestApp
             if (black != null)
             {
                 black.Value = "#111";
-                await dataStoreColorRead.UpdateAsync(black.Id, black);
+                await dataStoreColorRead.UpdateAsync(black);
             }
 
             //Delete a color
