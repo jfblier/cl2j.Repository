@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core.Cache
 {
-    public class DataStoreCache<TKey, TValue> : DataStoreBase<TKey, TValue>
+    public class DataStoreCacheDictionary<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue>
     {
         private readonly CacheLoader cacheLoader;
-        private readonly IDataStore<TKey, TValue> dataStore;
-        private List<TValue> cache = new();
+        private readonly IDataStoreDictionary<TKey, TValue> dataStore;
+        private Dictionary<TKey, TValue> cache = new();
 
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreCache(string name, IDataStore<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger)
+        public DataStoreCacheDictionary(string name, IDataStoreDictionary<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger)
             : base(getKeyPredicate)
         {
             this.dataStore = dataStore;
@@ -39,7 +39,7 @@ namespace cl2j.DataStore.Core.Cache
             }, logger);
         }
 
-        public override async Task<List<TValue>> GetAllAsync()
+        public override async Task<Dictionary<TKey, TValue>> GetAllAsync()
         {
             await cacheLoader.WaitAsync();
             return cache;
@@ -48,7 +48,10 @@ namespace cl2j.DataStore.Core.Cache
         public override async Task<TValue> GetByIdAsync(TKey key)
         {
             await cacheLoader.WaitAsync();
-            return FirstOrDefault(cache, key);
+            if (cache.TryGetValue(key, out var value))
+                return value;
+
+            return default(TValue);
         }
 
         public override async Task InsertAsync(TValue entity)
@@ -57,7 +60,7 @@ namespace cl2j.DataStore.Core.Cache
             try
             {
                 await dataStore.InsertAsync(entity);
-                cache.Add(entity);
+                Add(cache, entity);
             }
             finally
             {
@@ -71,10 +74,7 @@ namespace cl2j.DataStore.Core.Cache
             try
             {
                 await dataStore.UpdateAsync(entity);
-
-                var index = FindIndex(cache, entity);
-                if (index >= 0)
-                    cache[index] = entity;
+                Update(cache, entity);
             }
             finally
             {
@@ -88,10 +88,7 @@ namespace cl2j.DataStore.Core.Cache
             try
             {
                 await dataStore.DeleteAsync(key);
-
-                var index = FindIndex(cache, key);
-                if (index >= 0)
-                    cache.RemoveAt(index);
+                cache.Remove(key);
             }
             finally
             {

@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core
 {
-    public abstract class DataStoreBase<TKey, TValue> : IDataStore<TKey, TValue>
+    public abstract class DataStoreBaseList<TKey, TValue> : IDataStoreList<TKey, TValue>
     {
         private readonly Func<TValue, TKey> getKeyPredicate;
 
-        public DataStoreBase(Func<TValue, TKey> getKeyPredicate)
+        public DataStoreBaseList(Func<TValue, TKey> getKeyPredicate)
         {
             this.getKeyPredicate = getKeyPredicate;
         }

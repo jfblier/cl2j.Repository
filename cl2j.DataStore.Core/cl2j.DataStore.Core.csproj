@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/jfblier/cl2j.Repository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

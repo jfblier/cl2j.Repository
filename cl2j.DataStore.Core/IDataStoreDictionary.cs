@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core
 {
-    public interface IDataStore<TKey, TValue>
+    public interface IDataStoreDictionary<TKey, TValue>
     {
         //Retreive all the items
-        Task<List<TValue>> GetAllAsync();
+        Task<Dictionary<TKey, TValue>> GetAllAsync();
 
         //Get an item by it's key (Id)
         Task<TValue> GetByIdAsync(TKey key);

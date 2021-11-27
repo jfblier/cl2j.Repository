@@ -33,11 +33,11 @@ namespace cl2j.DataStore.TestApp
             services.AddFileStorage();
 
             //Configure the JSON DataStore.
-            //The store will use the FileStorageProvider to access the file colors.json.
+            //The store will use the FileStorageProvider to access the file color.json.
             //The field Id represent the key for the Color class
-            services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
+            services.AddDataStoreListJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
             //or add the store with a cache
-            //services.AddDataStoreJsonWithCache<string, Color>("Color", "DataStore", "colors.json", (color) => color.Id, TimeSpan.FromSeconds(5));
+            //services.AddDataStoreListJsonWithCache<string, Color>("DataStore", "colors.json", (color) => color.Id, TimeSpan.FromSeconds(5));
 
             services.AddSingleton<DataStoreSample>();
 

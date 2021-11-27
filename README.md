@@ -36,11 +36,11 @@ Path is the local path, i.e. c:\dev, where the json file will be.
 
 > cl2j.DataStore use [cl2j.FileStorage](https://github.com/jfblier/cl2j.FileStorage) library to abstract the access to the file system. This allow to use different providers like Disk, Azure, AWS, etc.
 
-3. Configures the services by calling `AddFileStorage()` and then `AddDataStoreJson()`
+3. Configures the services by calling `AddFileStorage()` and then `AddDataStoreListJson()` or `AddDataStoreDictionaryJson()`.
 
-4. Get the `IDataStore` configured and perform CRUD operatons.
+4. Get the `IDataStoreList` or `IDataStoreDictionary` configured and perform CRUD operatons.
 
-`AddDataStoreJson` receive three parameters:
+`AddDataStoreListJson` receive three parameters:
 
 1. The name of the FileStore to use. That's the name declared in the appsettings.json.
 2. The name of the file were the data are persisted.
@@ -60,7 +60,7 @@ public void ConfigureServices(IServiceCollection services)
   //Configure the JSON DataStore.
   //The store will use the FileStorageProvider to access the file colors.json.
   //The field Id represent the key for the Color class
-  services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
+  services.AddDataStoreListJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
 }
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -85,7 +85,7 @@ services.AddFileStorage();
 //Configure the JSON DataStore.
 //The store will use the FileStorageProvider to access the file colors.json.
 //The field Id represent the key for the Color class
-services.AddDataStoreJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
+services.AddDataStoreListJson<string, Color>("DataStore", "colors.json", (color) => color.Id);
 
 //Add the Disk FileStorage provider
 var serviceProvider = services.BuildServiceProvider();
@@ -99,9 +99,9 @@ Here's a class that execute common operations.
 ```cs
 internal class DataStoreSample
 {
-    private readonly IDataStore<string, Color> dataStoreColorRead;
+    private readonly IDataStoreList<string, Color> dataStoreColorRead;
 
-    public DataStoreSample(IDataStore<string, Color> dataStoreColorRead)
+    public DataStoreSample(IDataStoreList<string, Color> dataStoreColorRead)
     {
         this.dataStoreColorRead = dataStoreColorRead;
     }
@@ -136,7 +136,7 @@ internal class DataStoreSample
 }
 ```
 
-The class receive, by Dependency Injection, the `IDataStore`. The ExecuteAsync method insert colors, retreive all the colors inserted, modify the black color value and remove the magenta color.
+The class receive, by Dependency Injection, the `IDataStoreList`. The ExecuteAsync method insert colors, retreive all the colors inserted, modify the black color value and remove the magenta color.
 
 A file named `colors.json` was created:
 
@@ -171,13 +171,35 @@ A file named `colors.json` was created:
 
 # Operations
 
-Here's the operations available from the `IDataStore` interface:
+Here's the operations available from the `IDataStoreList` interface:
 
 ```cs
-public interface IDataStore<TKey, TValue>
+public interface IDataStoreList<TKey, TValue>
 {
     //Retreive all the items
     Task<IEnumerable<TValue>> GetAllAsync();
+
+    //Get an item by it's key (Id)
+    Task<TValue> GetByIdAsync(TKey key);
+
+    //Insert a new item. The key must not exists
+    Task InsertAsync(TValue entity);
+
+    //Update an item
+    Task UpdateAsync(TValue entity);
+
+    //Delete an item
+    Task DeleteAsync(TKey key);
+}
+```
+
+Here's the operations available from the `IDataStoreDictionary` interface:
+
+```cs
+public interface IDataStoreDictionary<TKey, TValue>
+{
+    //Retreive all the items
+    Task<Dictionary<TKey, TValue>> GetAllAsync();
 
     //Get an item by it's key (Id)
     Task<TValue> GetByIdAsync(TKey key);
@@ -198,10 +220,10 @@ public interface IDataStore<TKey, TValue>
 Adding a memory cache, that is thread-safe, and refresh itself at specified interval is as simple as adding the following line in your startup or program:
 
 ```cs
-services.AddDataStoreJsonWithCache<string, Color>("Color", "DataStore", "colors.json", (color) => color.Id, TimeSpan.FromSeconds(5));
+services.AddDataStoreListJsonWithCache<string, Color>("Color", "DataStore", "colors.json", (color) => color.Id, TimeSpan.FromSeconds(5));
 ```
 
-As the DataStoreCache is a `Decorator Pattern` and implement the `IDataStore` interface, using the cache is the same as using the `IDataStore`.
+As the DataStoreCache is a `Decorator Pattern` and implement the `IDataStoreList` interface, using the cache is the same as using the `IDataStoreList`.
 
 - `Cache name` Name of the cache - for logging purpose
 - `FileStore name` Name of the FileStore to use. That's the name declared in the appsettings.json.

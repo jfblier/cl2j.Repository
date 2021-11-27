@@ -9,32 +9,77 @@ namespace cl2j.DataStore.Json
 {
     public static class DataStoreJsonExtensions
     {
-        public static void AddDataStoreJsonWithCache<TKey, TValue>(this IServiceCollection services, string name, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate, TimeSpan refreshInterval)
+        #region List
+
+        public static void AddDataStoreListJsonWithCache<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate, TimeSpan refreshInterval)
         {
-            services.AddSingleton<IDataStore<TKey, TValue>>(builder =>
+            services.AddSingleton<IDataStoreList<TKey, TValue>>(builder =>
             {
-                var logger = builder.GetRequiredService<ILogger<DataStoreCache<TKey, TValue>>>();
+                var logger = builder.GetRequiredService<ILogger<DataStoreCacheList<TKey, TValue>>>();
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
                 var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
 
-                var dataStore = new DataStoreJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
-                var dataStoreCache = new DataStoreCache<TKey, TValue>(name, dataStore, refreshInterval, predicate, logger);
+                var dataStore = new DataStoreListJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
+                var dataStoreCache = new DataStoreCacheList<TKey, TValue>(GetName<TValue>(), dataStore, refreshInterval, predicate, logger);
 
                 return dataStoreCache;
             });
         }
 
-        public static void AddDataStoreJson<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate)
+        public static void AddDataStoreListJson<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate)
         {
-            services.AddSingleton<IDataStore<TKey, TValue>>(builder =>
+            services.AddSingleton<IDataStoreList<TKey, TValue>>(builder =>
             {
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
                 var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
 
-                var dataStore = new DataStoreJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
+                var dataStore = new DataStoreListJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
 
                 return dataStore;
             });
         }
+
+        #endregion List
+
+        #region Dictionary
+
+        public static void AddDataStoreDictionaryJsonWithCache<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate, TimeSpan refreshInterval)
+        {
+            services.AddSingleton<IDataStoreDictionary<TKey, TValue>>(builder =>
+            {
+                var logger = builder.GetRequiredService<ILogger<DataStoreCacheDictionary<TKey, TValue>>>();
+                var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
+                var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
+
+                var dataStore = new DataStoreDictionaryJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
+                var dataStoreCache = new DataStoreCacheDictionary<TKey, TValue>(GetName<TValue>(), dataStore, refreshInterval, predicate, logger);
+
+                return dataStoreCache;
+            });
+        }
+
+        public static void AddDataStoreDictionaryJson<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate)
+        {
+            services.AddSingleton<IDataStoreDictionary<TKey, TValue>>(builder =>
+            {
+                var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
+                var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
+
+                var dataStore = new DataStoreDictionaryJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate);
+
+                return dataStore;
+            });
+        }
+
+        #endregion Dictionary
+
+        #region Private
+
+        private static string GetName<T>()
+        {
+            return typeof(T).Name.ToLower();
+        }
+
+        #endregion Private
     }
 }

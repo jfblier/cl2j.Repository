@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Json
 {
-    public class DataStoreJson<TKey, TValue> : DataStoreBase<TKey, TValue>
+    public class DataStoreDictionaryJson<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue>
     {
         private readonly IFileStorageProvider fileStorageProvider;
         private readonly string filename;
@@ -16,7 +16,7 @@ namespace cl2j.DataStore.Json
 
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, bool indent = true)
+        public DataStoreDictionaryJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, bool indent = true)
             : base(getKeyPredicate)
         {
             this.fileStorageProvider = fileStorageProvider;
@@ -24,16 +24,18 @@ namespace cl2j.DataStore.Json
             this.indent = indent;
         }
 
-        public override async Task<List<TValue>> GetAllAsync()
+        public override async Task<Dictionary<TKey, TValue>> GetAllAsync()
         {
-            var list = await fileStorageProvider.ReadJsonObjectAsync<List<TValue>>(filename);
-            return list;
+            var dict = await fileStorageProvider.ReadJsonObjectAsync<Dictionary<TKey, TValue>>(filename);
+            return dict;
         }
 
         public override async Task<TValue> GetByIdAsync(TKey key)
         {
-            var list = await GetAllAsync();
-            return FirstOrDefault(list, key);
+            var dict = await GetAllAsync();
+            if (dict.TryGetValue(key, out var value))
+                return value;
+            return default(TValue);
         }
 
         public override async Task InsertAsync(TValue entity)
@@ -41,15 +43,9 @@ namespace cl2j.DataStore.Json
             await semaphore.WaitAsync();
             try
             {
-                var list = await GetAllAsync();
-
-                int index = FindIndex(list, entity);
-                if (index >= 0)
-                    throw new ConflictException();
-
-                list.Add(entity);
-
-                await WriteAsync(list);
+                var dict = await GetAllAsync();
+                Add(dict, entity);
+                await WriteAsync(dict);
             }
             finally
             {
@@ -62,15 +58,11 @@ namespace cl2j.DataStore.Json
             await semaphore.WaitAsync();
             try
             {
-                var list = await GetAllAsync();
+                var dict = await GetAllAsync();
 
-                int index = FindIndex(list, entity);
-                if (index < 0)
-                    throw new NotFoundException();
+                Update(dict, entity);
 
-                list[index] = entity;
-
-                await WriteAsync(list);
+                await WriteAsync(dict);
             }
             finally
             {
@@ -83,13 +75,12 @@ namespace cl2j.DataStore.Json
             await semaphore.WaitAsync();
             try
             {
-                var list = await GetAllAsync();
+                var dict = await GetAllAsync();
 
-                var nb = RemoveAll(list, key);
-                if (nb <= 0)
+                if (!dict.Remove(key))
                     throw new NotFoundException();
 
-                await WriteAsync(list);
+                await WriteAsync(dict);
             }
             finally
             {
@@ -97,7 +88,7 @@ namespace cl2j.DataStore.Json
             }
         }
 
-        private async Task WriteAsync(IEnumerable<TValue> list)
+        private async Task WriteAsync(IDictionary<TKey, TValue> list)
         {
             await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent);
         }
