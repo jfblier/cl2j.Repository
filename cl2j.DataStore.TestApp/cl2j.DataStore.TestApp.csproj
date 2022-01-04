@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>cl2j.DataStore.TestApp</AssemblyName>
     <RootNamespace>cl2j.Repository.TestApp</RootNamespace>
   </PropertyGroup>

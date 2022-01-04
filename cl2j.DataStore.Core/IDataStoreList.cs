@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace cl2j.DataStore.Core
+﻿namespace cl2j.DataStore.Core
 {
     public interface IDataStoreList<TKey, TValue>
     {
@@ -9,7 +6,7 @@ namespace cl2j.DataStore.Core
         Task<List<TValue>> GetAllAsync();
 
         //Get an item by it's key (Id)
-        Task<TValue> GetByIdAsync(TKey key);
+        Task<TValue?> GetByIdAsync(TKey key);
 
         //Insert a new item. The key must not exists
         Task InsertAsync(TValue entity);

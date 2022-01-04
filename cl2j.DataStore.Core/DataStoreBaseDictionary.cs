@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace cl2j.DataStore.Core
+﻿namespace cl2j.DataStore.Core
 {
-    public abstract class DataStoreBaseDictionary<TKey, TValue> : IDataStoreDictionary<TKey, TValue>
+    public abstract class DataStoreBaseDictionary<TKey, TValue> : IDataStoreDictionary<TKey, TValue> where TKey : class
     {
         private readonly Func<TValue, TKey> getKeyPredicate;
 
@@ -17,7 +13,7 @@ namespace cl2j.DataStore.Core
 
         public abstract Task<Dictionary<TKey, TValue>> GetAllAsync();
 
-        public abstract Task<TValue> GetByIdAsync(TKey key);
+        public abstract Task<TValue?> GetByIdAsync(TKey key);
 
         public abstract Task InsertAsync(TValue entity);
 

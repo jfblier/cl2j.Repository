@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>cl2j</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>

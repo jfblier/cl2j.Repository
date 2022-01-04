@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core.Cache
 {
@@ -35,7 +31,9 @@ namespace cl2j.DataStore.Core.Cache
                     semaphore.Release();
                 }
 
+#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogDebug($"DataStoreCache<{name}> --> {cache.Count} {name}(s) in {sw.ElapsedMilliseconds}ms");
+#pragma warning restore CA2254 // Template should be a static expression
             }, logger);
         }
 
@@ -45,7 +43,7 @@ namespace cl2j.DataStore.Core.Cache
             return cache;
         }
 
-        public override async Task<TValue> GetByIdAsync(TKey key)
+        public override async Task<TValue?> GetByIdAsync(TKey key)
         {
             await cacheLoader.WaitAsync();
             return FirstOrDefault(cache, key);

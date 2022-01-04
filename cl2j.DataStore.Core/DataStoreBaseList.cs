@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace cl2j.DataStore.Core
+﻿namespace cl2j.DataStore.Core
 {
     public abstract class DataStoreBaseList<TKey, TValue> : IDataStoreList<TKey, TValue>
     {
@@ -18,13 +13,13 @@ namespace cl2j.DataStore.Core
 
         public abstract Task<List<TValue>> GetAllAsync();
 
-        public abstract Task<TValue> GetByIdAsync(TKey key);
+        public abstract Task<TValue?> GetByIdAsync(TKey key);
 
         public abstract Task InsertAsync(TValue entity);
 
         public abstract Task UpdateAsync(TValue entity);
 
-        protected TValue FirstOrDefault(IEnumerable<TValue> list, TKey key)
+        protected TValue? FirstOrDefault(IEnumerable<TValue> list, TKey key)
         {
             return list.FirstOrDefault(item => EqualityComparer<TKey>.Default.Equals(getKeyPredicate(item), key));
         }

@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core.Cache
 {
-    public class DataStoreCacheDictionary<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue>
+    public class DataStoreCacheDictionary<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue> where TKey : class
     {
         private readonly CacheLoader cacheLoader;
         private readonly IDataStoreDictionary<TKey, TValue> dataStore;
@@ -35,7 +31,9 @@ namespace cl2j.DataStore.Core.Cache
                     semaphore.Release();
                 }
 
+#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogDebug($"DataStoreCache<{name}> --> {cache.Count} {name}(s) in {sw.ElapsedMilliseconds}ms");
+#pragma warning restore CA2254 // Template should be a static expression
             }, logger);
         }
 
@@ -45,13 +43,13 @@ namespace cl2j.DataStore.Core.Cache
             return cache;
         }
 
-        public override async Task<TValue> GetByIdAsync(TKey key)
+        public override async Task<TValue?> GetByIdAsync(TKey key)
         {
             await cacheLoader.WaitAsync();
             if (cache.TryGetValue(key, out var value))
                 return value;
 
-            return default(TValue);
+            return default;
         }
 
         public override async Task InsertAsync(TValue entity)

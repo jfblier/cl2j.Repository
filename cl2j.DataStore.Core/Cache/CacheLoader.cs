@@ -1,20 +1,17 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Core.Cache
 {
     public class CacheLoader
     {
-        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
-        private static Timer timer;
+        private static readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly string name;
         private readonly TimeSpan refreshInterval;
         private readonly Func<Task> refreshCallback;
         private readonly ILogger logger;
         private bool loaded;
+        private readonly Timer timer;
 
         public CacheLoader(string name, TimeSpan refreshInterval, Func<Task> refreshCallback, ILogger logger)
         {
@@ -23,7 +20,9 @@ namespace cl2j.DataStore.Core.Cache
             this.refreshCallback = refreshCallback;
             this.logger = logger;
 
+#pragma warning disable CA2254 // Template should be a static expression
             logger.LogDebug($"CacheLoader<{name}> Initialized with refresh every {refreshInterval}");
+#pragma warning restore CA2254 // Template should be a static expression
 
             timer = new Timer(RefreshAsync, null, TimeSpan.Zero, refreshInterval);
         }
@@ -38,7 +37,7 @@ namespace cl2j.DataStore.Core.Cache
             return loaded;
         }
 
-        private async void RefreshAsync(object state)
+        private async void RefreshAsync(object? state)
         {
             await semaphore.WaitAsync();
             try
@@ -48,7 +47,9 @@ namespace cl2j.DataStore.Core.Cache
             }
             catch (Exception ex)
             {
+#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogError(ex, $"CacheLoader<{name}> : Unexpected error while doing the refresh.");
+#pragma warning restore CA2254 // Template should be a static expression
             }
             finally
             {

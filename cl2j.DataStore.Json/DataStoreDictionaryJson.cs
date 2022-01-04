@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Json
 {
-    public class DataStoreDictionaryJson<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue>
+    public class DataStoreDictionaryJson<TKey, TValue> : DataStoreBaseDictionary<TKey, TValue> where TKey : class
     {
         private readonly IFileStorageProvider fileStorageProvider;
         private readonly string filename;
@@ -35,7 +35,7 @@ namespace cl2j.DataStore.Json
             var dict = await GetAllAsync();
             if (dict.TryGetValue(key, out var value))
                 return value;
-            return default(TValue);
+            return default;
         }
 
         public override async Task InsertAsync(TValue entity)

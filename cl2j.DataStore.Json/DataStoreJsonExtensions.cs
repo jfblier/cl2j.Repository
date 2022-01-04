@@ -43,7 +43,7 @@ namespace cl2j.DataStore.Json
 
         #region Dictionary
 
-        public static void AddDataStoreDictionaryJsonWithCache<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate, TimeSpan refreshInterval)
+        public static void AddDataStoreDictionaryJsonWithCache<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate, TimeSpan refreshInterval) where TKey : class
         {
             services.AddSingleton<IDataStoreDictionary<TKey, TValue>>(builder =>
             {
@@ -58,7 +58,7 @@ namespace cl2j.DataStore.Json
             });
         }
 
-        public static void AddDataStoreDictionaryJson<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate)
+        public static void AddDataStoreDictionaryJson<TKey, TValue>(this IServiceCollection services, string fileStorageName, string dataStoreFileName, Func<TValue, TKey> predicate) where TKey : class
         {
             services.AddSingleton<IDataStoreDictionary<TKey, TValue>>(builder =>
             {
