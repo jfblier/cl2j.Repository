@@ -1,26 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>cl2j</Authors>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/jfblier/cl2j.Repository</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
-    <RepositoryType>GitHub</RepositoryType>
-    <PackageReadmeFile>readme.md</PackageReadmeFile>
-    <Version>1.0.3</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>cl2j</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/jfblier/cl2j.Repository</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/jfblier/cl2j.Repository</RepositoryUrl>
+		<RepositoryType>GitHub</RepositoryType>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<Version>1.0.3</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\readme.md" Pack="true" PackagePath="\" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\readme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="cl2j.FileStorage" Version="1.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="cl2j.FileStorage" Version="1.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\cl2j.DataStore.Core\cl2j.DataStore.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\cl2j.DataStore.Core\cl2j.DataStore.Core.csproj" />
+	</ItemGroup>
 </Project>

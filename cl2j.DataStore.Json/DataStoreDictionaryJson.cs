@@ -1,10 +1,6 @@
 ﻿using cl2j.DataStore.Core;
 using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace cl2j.DataStore.Json
 {
@@ -30,7 +26,7 @@ namespace cl2j.DataStore.Json
             return dict;
         }
 
-        public override async Task<TValue> GetByIdAsync(TKey key)
+        public override async Task<TValue?> GetByIdAsync(TKey key)
         {
             var dict = await GetAllAsync();
             if (dict.TryGetValue(key, out var value))

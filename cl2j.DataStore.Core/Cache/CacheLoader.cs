@@ -11,7 +11,9 @@ namespace cl2j.DataStore.Core.Cache
         private readonly Func<Task> refreshCallback;
         private readonly ILogger logger;
         private bool loaded;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly Timer timer;
+#pragma warning restore IDE0052 // Remove unread private members
 
         public CacheLoader(string name, TimeSpan refreshInterval, Func<Task> refreshCallback, ILogger logger)
         {
