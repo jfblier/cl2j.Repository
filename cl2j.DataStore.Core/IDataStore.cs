@@ -1,9 +1,9 @@
 ﻿namespace cl2j.DataStore.Core
 {
-    public interface IDataStoreDictionary<TKey, TValue> where TKey : class
+    public interface IDataStore<TKey, TValue>
     {
         //Retreive all the items
-        Task<Dictionary<TKey, TValue>> GetAllAsync();
+        Task<List<TValue>> GetAllAsync();
 
         //Get an item by it's key (Id)
         Task<TValue?> GetByIdAsync(TKey key);

@@ -6,9 +6,9 @@ namespace cl2j.DataStore.TestApp
 {
     internal class DataStoreSample
     {
-        private readonly IDataStoreList<string, Color> dataStoreColorRead;
+        private readonly IDataStore<string, Color> dataStoreColorRead;
 
-        public DataStoreSample(IDataStoreList<string, Color> dataStoreColorRead)
+        public DataStoreSample(IDataStore<string, Color> dataStoreColorRead)
         {
             this.dataStoreColorRead = dataStoreColorRead;
         }

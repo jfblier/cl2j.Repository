@@ -1,28 +1,31 @@
 ﻿using cl2j.DataStore.Core;
 using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace cl2j.DataStore.Json
 {
-    public class DataStoreListJson<TKey, TValue> : DataStoreBaseList<TKey, TValue>
+    public class DataStoreJson<TKey, TValue> : DataStoreBase<TKey, TValue>
     {
         private readonly IFileStorageProvider fileStorageProvider;
         private readonly string filename;
+        private readonly ILogger logger;
         private readonly bool indent;
 
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreListJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, bool indent = true)
+        public DataStoreJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, ILogger logger, bool indent = true)
             : base(getKeyPredicate)
         {
             this.fileStorageProvider = fileStorageProvider;
             this.filename = filename;
+            this.logger = logger;
             this.indent = indent;
         }
 
         public override async Task<List<TValue>> GetAllAsync()
         {
-            var list = await fileStorageProvider.ReadJsonObjectAsync<List<TValue>>(filename);
+            var list = await fileStorageProvider.ReadJsonObjectAsync<List<TValue>>(filename, null, true);
             return list;
         }
 
@@ -47,6 +50,10 @@ namespace cl2j.DataStore.Json
 
                 await WriteAsync(list);
             }
+            catch (Exception ex)
+            {
+                logger.LogTrace(ex, "Unexpected error during Insert");
+            }
             finally
             {
                 semaphore.Release();
@@ -68,6 +75,10 @@ namespace cl2j.DataStore.Json
 
                 await WriteAsync(list);
             }
+            catch (Exception ex)
+            {
+                logger.LogTrace(ex, "Unexpected error during Updte");
+            }
             finally
             {
                 semaphore.Release();
@@ -87,6 +98,10 @@ namespace cl2j.DataStore.Json
 
                 await WriteAsync(list);
             }
+            catch (Exception ex)
+            {
+                logger.LogTrace(ex, "Unexpected error during Delete");
+            }
             finally
             {
                 semaphore.Release();
@@ -95,7 +110,7 @@ namespace cl2j.DataStore.Json
 
         private async Task WriteAsync(IEnumerable<TValue> list)
         {
-            await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent);
+            await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent, null, true);
         }
     }
 }

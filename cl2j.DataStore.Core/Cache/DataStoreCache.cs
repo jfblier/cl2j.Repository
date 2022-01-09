@@ -3,15 +3,15 @@ using System.Diagnostics;
 
 namespace cl2j.DataStore.Core.Cache
 {
-    public class DataStoreCacheList<TKey, TValue> : DataStoreBaseList<TKey, TValue>
+    public class DataStoreCache<TKey, TValue> : DataStoreBase<TKey, TValue>
     {
         private readonly CacheLoader cacheLoader;
-        private readonly IDataStoreList<TKey, TValue> dataStore;
+        private readonly IDataStore<TKey, TValue> dataStore;
         private List<TValue> cache = new();
 
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreCacheList(string name, IDataStoreList<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger)
+        public DataStoreCache(string name, IDataStore<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger)
             : base(getKeyPredicate)
         {
             this.dataStore = dataStore;
