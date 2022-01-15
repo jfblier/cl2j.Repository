@@ -1,6 +1,7 @@
 ﻿using cl2j.DataStore.Core;
 using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
+using cl2j.Tooling.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace cl2j.DataStore.Json

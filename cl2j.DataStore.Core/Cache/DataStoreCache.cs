@@ -18,22 +18,31 @@ namespace cl2j.DataStore.Core.Cache
 
             cacheLoader = new CacheLoader(name, refreshInterval, async () =>
             {
-                var sw = Stopwatch.StartNew();
-                var tmpCache = await dataStore.GetAllAsync();
-
-                await semaphore.WaitAsync();
                 try
                 {
-                    cache = tmpCache;
-                }
-                finally
-                {
-                    semaphore.Release();
-                }
+                    var sw = Stopwatch.StartNew();
+                    var tmpCache = await dataStore.GetAllAsync();
+
+                    await semaphore.WaitAsync();
+                    try
+                    {
+                        cache = tmpCache;
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                    }
 
 #pragma warning disable CA2254 // Template should be a static expression
-                logger.LogDebug($"DataStoreCache<{name}> --> {cache.Count} {name}(s) in {sw.ElapsedMilliseconds}ms");
+                    logger.LogDebug($"DataStoreCache<{name}> --> {cache.Count} {name}(s) in {sw.ElapsedMilliseconds}ms");
 #pragma warning restore CA2254 // Template should be a static expression
+                }
+                catch (Exception ex)
+                {
+#pragma warning disable CA2254 // Template should be a static expression
+                    logger.LogCritical(ex, $"DataStoreCache<{name}> --> Unable to read the entities");
+#pragma warning restore CA2254 // Template should be a static expression
+                }
             }, logger);
         }
 
