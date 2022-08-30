@@ -19,6 +19,8 @@
 
         public abstract Task UpdateAsync(TValue entity);
 
+        public abstract Task ReplaceAllByAsync(IDictionary<TKey, TValue> items);
+
         protected TValue? FirstOrDefault(IEnumerable<TValue> list, TKey key)
         {
             return list.FirstOrDefault(item => EqualityComparer<TKey>.Default.Equals(getKeyPredicate(item), key));

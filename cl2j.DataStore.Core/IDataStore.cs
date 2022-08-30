@@ -16,5 +16,7 @@
 
         //Delete an item
         Task DeleteAsync(TKey key);
+
+        Task ReplaceAllByAsync(IDictionary<TKey, TValue> items);
     }
 }

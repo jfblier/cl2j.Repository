@@ -109,6 +109,19 @@ namespace cl2j.DataStore.Json
             }
         }
 
+        public override async Task ReplaceAllByAsync(IDictionary<TKey, TValue> items)
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                await WriteAsync(items.Values.ToList());
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
+
         private async Task WriteAsync(IEnumerable<TValue> list)
         {
             await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent, null, true);

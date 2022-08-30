@@ -105,5 +105,19 @@ namespace cl2j.DataStore.Core.Cache
                 semaphore.Release();
             }
         }
+
+        public override async Task ReplaceAllByAsync(IDictionary<TKey, TValue> items)
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                await dataStore.ReplaceAllByAsync(items);
+                cache = items.Values.ToList();
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
     }
 }
