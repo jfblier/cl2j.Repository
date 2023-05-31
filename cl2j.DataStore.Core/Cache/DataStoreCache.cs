@@ -1,17 +1,19 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace cl2j.DataStore.Core.Cache
 {
-    public class DataStoreCache<TKey, TValue> : DataStoreBase<TKey, TValue>
+    public class DataStoreCache<TKey, TValue> : DataStoreBase<TKey, TValue>, Tooling.Observers.IObservable<List<TValue>>
     {
         private readonly CacheLoader cacheLoader;
         private readonly IDataStore<TKey, TValue> dataStore;
         private List<TValue> cache = new();
 
+        private readonly Tooling.Observers.Observable<List<TValue>> observable = new();
+
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreCache(string name, IDataStore<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger)
+        public DataStoreCache(string name, IDataStore<TKey, TValue> dataStore, TimeSpan refreshInterval, Func<TValue, TKey> getKeyPredicate, ILogger logger, Func<TValue, object?>? orderbyPredicate = null, bool? ascending = null)
             : base(getKeyPredicate)
         {
             this.dataStore = dataStore;
@@ -23,10 +25,19 @@ namespace cl2j.DataStore.Core.Cache
                     var sw = Stopwatch.StartNew();
                     var tmpCache = await dataStore.GetAllAsync();
 
+                    if (orderbyPredicate != null)
+                    {
+                        if (ascending == null || ascending.Value)
+                            tmpCache = tmpCache.OrderBy(orderbyPredicate).ToList();
+                        else
+                            tmpCache = tmpCache.OrderByDescending(orderbyPredicate).ToList();
+                    }
+
                     await semaphore.WaitAsync();
                     try
                     {
                         cache = tmpCache;
+                        await NotifyAsync(cache);
                     }
                     finally
                     {
@@ -65,6 +76,7 @@ namespace cl2j.DataStore.Core.Cache
             {
                 await dataStore.InsertAsync(entity);
                 cache.Add(entity);
+                await NotifyAsync(cache);
             }
             finally
             {
@@ -81,7 +93,10 @@ namespace cl2j.DataStore.Core.Cache
 
                 var index = FindIndex(cache, entity);
                 if (index >= 0)
+                {
                     cache[index] = entity;
+                    await NotifyAsync(cache);
+                }
             }
             finally
             {
@@ -98,7 +113,10 @@ namespace cl2j.DataStore.Core.Cache
 
                 var index = FindIndex(cache, key);
                 if (index >= 0)
+                {
                     cache.RemoveAt(index);
+                    await NotifyAsync(cache);
+                }
             }
             finally
             {
@@ -113,11 +131,22 @@ namespace cl2j.DataStore.Core.Cache
             {
                 await dataStore.ReplaceAllByAsync(items);
                 cache = items.Values.ToList();
+                await NotifyAsync(cache);
             }
             finally
             {
                 semaphore.Release();
             }
+        }
+
+        public bool Subscribe(Tooling.Observers.IObserver<List<TValue>> observer)
+        {
+            return observable.Subscribe(observer);
+        }
+
+        public async Task NotifyAsync(List<TValue> t)
+        {
+            await observable.NotifyAsync(t);
         }
     }
 }

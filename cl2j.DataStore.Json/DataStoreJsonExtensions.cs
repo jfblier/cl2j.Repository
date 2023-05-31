@@ -14,7 +14,7 @@ namespace cl2j.DataStore.Json
             {
                 var logger = builder.GetRequiredService<ILogger<DataStoreCache<TKey, TValue>>>();
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
-                var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
+                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName);
                 if (fileStorageProvider == null)
                     throw new InvalidOperationException();
 
@@ -31,7 +31,7 @@ namespace cl2j.DataStore.Json
             {
                 var logger = builder.GetRequiredService<ILogger<DataStoreCache<TKey, TValue>>>();
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
-                var fileStorageProvider = fileStorageFactory.Get(fileStorageName);
+                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName);
                 if (fileStorageProvider == null)
                     throw new InvalidOperationException();
 

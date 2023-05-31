@@ -1,4 +1,5 @@
-﻿using cl2j.DataStore.Core;
+﻿using System.Diagnostics;
+using cl2j.DataStore.Core;
 using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
 using cl2j.Tooling.Exceptions;
@@ -15,7 +16,7 @@ namespace cl2j.DataStore.Json
 
         private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public DataStoreJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, ILogger logger, bool indent = true)
+        public DataStoreJson(IFileStorageProvider fileStorageProvider, string filename, Func<TValue, TKey> getKeyPredicate, ILogger logger, bool indent = false)
             : base(getKeyPredicate)
         {
             this.fileStorageProvider = fileStorageProvider;
@@ -26,7 +27,9 @@ namespace cl2j.DataStore.Json
 
         public override async Task<List<TValue>> GetAllAsync()
         {
-            var list = await fileStorageProvider.ReadJsonObjectAsync<List<TValue>>(filename, null, true);
+            var sw = Stopwatch.StartNew();
+            var list = await fileStorageProvider.ReadJsonObjectAsync<List<TValue>>(filename, null);
+            logger.LogTrace($"DataStoreJson.GetAllAsync<{typeof(TValue).Name}>() -> {list.Count} in {sw.ElapsedMilliseconds}ms");
             return list;
         }
 
@@ -124,7 +127,7 @@ namespace cl2j.DataStore.Json
 
         private async Task WriteAsync(IEnumerable<TValue> list)
         {
-            await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent, null, true);
+            await fileStorageProvider.WriteJsonObjectAsync(filename, list, indent, null);
         }
     }
 }

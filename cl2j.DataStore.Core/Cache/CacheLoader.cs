@@ -3,7 +3,10 @@ using System.Diagnostics;
 
 namespace cl2j.DataStore.Core.Cache
 {
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
+
     public class CacheLoader
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private static readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly string name;
@@ -22,9 +25,7 @@ namespace cl2j.DataStore.Core.Cache
             this.refreshCallback = refreshCallback;
             this.logger = logger;
 
-#pragma warning disable CA2254 // Template should be a static expression
             logger.LogDebug($"CacheLoader<{name}> Initialized with refresh every {refreshInterval}");
-#pragma warning restore CA2254 // Template should be a static expression
 
             timer = new Timer(RefreshAsync, null, TimeSpan.Zero, refreshInterval);
         }
@@ -49,9 +50,7 @@ namespace cl2j.DataStore.Core.Cache
             }
             catch (Exception ex)
             {
-#pragma warning disable CA2254 // Template should be a static expression
                 logger.LogError(ex, $"CacheLoader<{name}> : Unexpected error while doing the refresh.");
-#pragma warning restore CA2254 // Template should be a static expression
             }
             finally
             {
