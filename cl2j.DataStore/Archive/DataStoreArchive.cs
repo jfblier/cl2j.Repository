@@ -1,12 +1,7 @@
 ﻿using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace cl2j.DataStore.Core.Archive
+namespace cl2j.DataStore.Archive
 {
     public class DataStoreArchive<TKey, TValue> : IDataStore<TKey, TValue>
     {
@@ -14,7 +9,7 @@ namespace cl2j.DataStore.Core.Archive
         private readonly IFileStorageProvider fileStorageProvider;
         private readonly string filename;
 
-        public DataStoreArchive(string name, IDataStore<TKey, TValue> dataStore, IFileStorageProvider fileStorageProvider, string filename)
+        public DataStoreArchive(IDataStore<TKey, TValue> dataStore, IFileStorageProvider fileStorageProvider, string filename)
         {
             this.dataStore = dataStore;
             this.fileStorageProvider = fileStorageProvider;

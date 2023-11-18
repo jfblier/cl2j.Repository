@@ -1,5 +1,4 @@
-﻿using cl2j.DataStore.Core;
-using cl2j.DataStore.Core.Cache;
+﻿using cl2j.DataStore.Cache;
 using cl2j.FileStorage.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,10 +13,7 @@ namespace cl2j.DataStore.Json
             {
                 var logger = builder.GetRequiredService<ILogger<DataStoreCache<TKey, TValue>>>();
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
-                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName);
-                if (fileStorageProvider == null)
-                    throw new InvalidOperationException();
-
+                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName) ?? throw new InvalidOperationException();
                 var dataStore = new DataStoreJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate, logger);
                 var dataStoreCache = new DataStoreCache<TKey, TValue>(GetName<TValue>(), dataStore, refreshInterval, predicate, logger);
 
@@ -31,10 +27,7 @@ namespace cl2j.DataStore.Json
             {
                 var logger = builder.GetRequiredService<ILogger<DataStoreCache<TKey, TValue>>>();
                 var fileStorageFactory = builder.GetRequiredService<IFileStorageFactory>();
-                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName);
-                if (fileStorageProvider == null)
-                    throw new InvalidOperationException();
-
+                var fileStorageProvider = fileStorageFactory.GetProvider(fileStorageName) ?? throw new InvalidOperationException();
                 var dataStore = new DataStoreJson<TKey, TValue>(fileStorageProvider, dataStoreFileName, predicate, logger);
 
                 return dataStore;

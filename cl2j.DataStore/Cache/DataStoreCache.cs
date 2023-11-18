@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-namespace cl2j.DataStore.Core.Cache
+namespace cl2j.DataStore.Cache
 {
     public class DataStoreCache<TKey, TValue> : DataStoreBase<TKey, TValue>, Tooling.Observers.IObservable<List<TValue>>
     {
@@ -44,15 +44,11 @@ namespace cl2j.DataStore.Core.Cache
                         semaphore.Release();
                     }
 
-#pragma warning disable CA2254 // Template should be a static expression
                     logger.LogDebug($"DataStoreCache<{name}> --> {cache.Count} {name}(s) in {sw.ElapsedMilliseconds}ms");
-#pragma warning restore CA2254 // Template should be a static expression
                 }
                 catch (Exception ex)
                 {
-#pragma warning disable CA2254 // Template should be a static expression
                     logger.LogCritical(ex, $"DataStoreCache<{name}> --> Unable to read the entities");
-#pragma warning restore CA2254 // Template should be a static expression
                 }
             }, logger);
         }

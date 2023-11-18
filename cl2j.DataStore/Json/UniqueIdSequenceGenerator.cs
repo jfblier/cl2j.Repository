@@ -1,7 +1,7 @@
 ﻿using cl2j.FileStorage.Core;
 using cl2j.FileStorage.Extensions;
 
-namespace Infrastructure.Repositories
+namespace cl2j.DataStore.Json
 {
     public class UniqueIdSequenceGenerator
     {

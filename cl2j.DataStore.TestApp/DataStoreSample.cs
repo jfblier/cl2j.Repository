@@ -1,5 +1,4 @@
-﻿using cl2j.DataStore.Core;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace cl2j.DataStore.TestApp

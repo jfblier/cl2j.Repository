@@ -16,7 +16,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\cl2j.DataStore.Json\cl2j.DataStore.Json.csproj" />
+    <ProjectReference Include="..\cl2j.DataStore\cl2j.DataStore.csproj" />
   </ItemGroup>
   
   <ItemGroup>

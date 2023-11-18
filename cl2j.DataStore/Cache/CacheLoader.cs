@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
-namespace cl2j.DataStore.Core.Cache
+namespace cl2j.DataStore.Cache
 {
 #pragma warning disable CA1001 // Types that own disposable fields should be disposable
 
