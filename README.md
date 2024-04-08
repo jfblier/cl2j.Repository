@@ -1,3 +1,6 @@
+Deprecated - Replaced by https://github.com/CL2J-Technologies/dotnet-toolkit
+---
+
 `cl2j.DataStore` is a multi-providers CRUD repoository abstraction library written in C#. It's an open and extensible framework based on interfaces and Dependency Injection.
 
 Providers supported:
